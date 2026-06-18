@@ -1,0 +1,57 @@
+Fig 4e -- Per-mode many-body dephasing rate (kHz), storage modes S1..S7
+========================================================================
+
+SOURCE DATA
+-----------
+/Volumes/slab/Multimode/experiment/240911/RAM_paper_results/datasets/ManyBodyDephasing.csv
+  42 rows = 7 target modes x 6 spectator-state configs (state_idx 0..5).
+  Columns used:
+    target   : storage mode under test (1..7)
+    state_idx: spectator config 0..5 = cardinal Bloch states ['0','1','+x','-x','+y','-y']
+    t2       : fitted Ramsey decay time [microseconds] (= fit param p[3])
+    t2_err   : 1-sigma error on t2 [microseconds] (= sqrt(pCov[3,3]))
+
+PIPELINE PROVENANCE
+-------------------
+analysis_notebooks/RAQM paper/ManyBodyDephasing.ipynb, the cell that produces the
+Fig 4e plot ("Dephasing Rate (kHz)" vs "Mode Number"), notebook lines ~438-470:
+    kappas      = 1/T2s
+    kappa_errs  = T2_errs / (T2s**2)
+    del_kappa     = abs(min(kappas) - max(kappas)) * 1e3
+    del_kappa_err = sqrt(kappa_errs[..]^2 + kappa_errs[..]^2) * 1e3
+    print(f'Storage {mode_no}: {del_kappa} +/- {del_kappa_err} kHz')
+
+FORMULA USED
+------------
+For each target mode, over the 6 spectator-state configs:
+    kappa      = 1 / t2                      [MHz, since t2 in us]
+    kappa_err  = t2_err / t2**2
+    rate_kHz     = (max(kappa) - min(kappa)) * 1e3
+    rate_err_kHz = sqrt( kappa_err[argmax]^2 + kappa_err[argmin]^2 ) * 1e3
+
+Interpretation: the many-body dephasing rate is the SPREAD (max-minus-min) of the
+Ramsey dephasing rate as the spectator storage modes are swept over the cardinal
+Bloch states; the cross-Kerr between storages converts the spectator state into an
+extra, state-dependent dephasing of the target. The error bar combines the fit
+errors of the two extremal (min/max) configs in quadrature.
+
+NOTE on the error formula: notebook line 467 literally indexes kappa_errs[0] and
+kappa_errs[-1] (state_idx 0 and 5). The published figure error bars correspond to
+the errors of the ACTUAL min/max configs (argmin/argmax of kappa). These coincide
+whenever the extremes sit at state_idx 0 and 5, and reproduce all 7 published error
+bars exactly; the [0]/[-1] variant misses on S1/S4/S5. We therefore use argmin/argmax.
+
+VERIFICATION (extracted vs published Fig 4e values, kHz)
+--------------------------------------------------------
+mode  extracted_rate  pub_rate   extracted_err  pub_err   status
+S1    0.510           0.510      0.222          0.222     PASS
+S2    0.232           0.232      0.127          0.127     PASS
+S3    0.155           0.155      0.067          0.066     PASS
+S4    0.130           0.130      0.089          0.089     PASS
+S5    0.162           0.162      0.099          0.099     PASS
+S6    0.147           0.147      0.083          0.083     PASS
+S7    0.228           0.228      0.097          0.097     PASS
+
+OVERALL: PASS (all 7 modes match published rate and error to 2-3 sig figs).
+
+Mean many-body rate across S1..S7 = 0.224 kHz (paper: ~0.223 kHz). Consistent.

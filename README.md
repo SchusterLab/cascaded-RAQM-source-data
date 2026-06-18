@@ -13,8 +13,8 @@ fig2/   Fig 2(a)  f0g1 (Q<->B) Rabi trace            [pending raw trace]
         Fig 2(b)  B<->S2 beam-splitter swap trace     [pending raw trace]
         Fig 2(c)  beam-splitter RB, all modes M1-S1..7
         Fig 2(e)  per-mode SWAP infidelity bar chart
-fig3/   Fig 3(b)  random read fidelity vs # accesses (7 modes + ref)
-        Fig 3(c)  random read infidelity vs RAQM size
+fig3/   Fig 3(b)  random read fidelity vs # accesses (7 modes + ref)  [done]
+        Fig 3(c)  random read infidelity vs RAQM size                [done]
 fig4/   Fig 4(a)  cross-Kerr matrix
         Fig 4(c)  state-dependent access error matrix
         Fig 4(d)  spectator-access dephasing matrix
