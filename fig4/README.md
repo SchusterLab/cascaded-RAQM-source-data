@@ -13,16 +13,23 @@ spectator_mode, eps, eps_err` (7×7). `eps` is the fractional error on the BS_ta
 access when a state occupies the spectator mode.
 **Script:** `plot_fig4c.py` → `fig4c.pdf/.png` (eps in %, diagonal masked).
 
-## Fig 4(d) — spectator-access dephasing  ⏳ pending
-Source candidate: `t2s_with_spectators.csv` (per target/spectator T2 with random
-gates on the spectator). The dephasing-rate (kHz) conversion comes from
-`RAM_target_spectator_analysis.ipynb` — to be extracted.
+## Fig 4(d) — spectator-access dephasing  ✅
+**Dataset:** `fig4d_spectator_access_dephasing.csv` — `target_mode, spectator_mode,
+dephasing_kHz, dephasing_err_kHz`. The additional dephasing on storage S_i when
+spectator S_j is randomly accessed: `|1/T2_with_spectator - 1/T2_bare|`.
+Off-diagonal pair average = 2.773 kHz (paper: 2.772 kHz).
+**Script:** `plot_fig4d.py` → `fig4d.pdf/.png`. `extract_fig4d.py` regenerates the CSV.
 
-## Fig 4(e) — many-body dephasing rate  ⏳ pending
-Source candidate: `ManyBodyDephasing.csv` (per-mode Ramsey T2 with the other modes
-loaded). Rate (kHz) conversion from `ManyBodyDephasing*.ipynb`. Published values:
-S1 0.510±0.222 … S7 0.228±0.097 kHz.
+## Fig 4(e) — many-body dephasing rate  ✅
+**Dataset:** `fig4e_many_body_dephasing.csv` — `mode, rate_kHz, rate_err_kHz`.
+Rate = spread of 1/T2 as the other storages are swept over cardinal states.
+Matches published S1 0.510±0.222 … S7 0.228±0.097 kHz exactly.
+**Script:** `plot_fig4e.py` → `fig4e.pdf/.png`. `extract_fig4e.py` regenerates the CSV.
 
-## Fig 4(f) — random-read error budget  ⏳ pending
-Source: `error_budget_new.ipynb` (stacked error channels per mode: swaps, decay,
-dephasing, spectator-access dephasing, many-body dephasing, state-dependent access).
+## Fig 4(f) — random-read error budget  ✅
+**Dataset:** `fig4f_error_budget.csv` — per mode: `decay_pct, dephasing_pct,
+spectator_access_dephasing_pct, many_body_dephasing_pct, state_dependent_access_pct,
+swaps_pct, measured_pct, measured_err_pct`. Channels from `error_budget_new.ipynb`;
+`measured_pct` = 1 - random_read_fidelity (bit-identical to all_rbam.csv).
+**Script:** `plot_fig4f.py` → `fig4f.pdf/.png`. `extract_fig4f.py` documents the
+per-channel formulas and regenerates the CSV.

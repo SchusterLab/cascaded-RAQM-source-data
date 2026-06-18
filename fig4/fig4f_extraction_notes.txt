@@ -1,0 +1,134 @@
+================================================================================
+Fig 4f -- Random-read error budget : extraction notes
+================================================================================
+
+Primary notebook:
+  /Users/eesh/Documents/multimode_expts/analysis_notebooks/RAQM paper/error_budget_new.ipynb
+
+The Fig 4f stacked bar chart is built in cell In[143] ("For eesh presentation").
+x-axis = storage modes S1..S7; y-axis = Errors (%); six stacked channels per mode,
+plus a "Measured" black marker + error bar per mode.
+
+The six stacked channels are columns of df_master_new_def, plotted in this order
+(bottom -> top in the figure):
+
+  figure column (legend)              df_master_new_def column      CSV column
+  ----------------------------------  ----------------------------  -------------------------------
+  Swaps (Bare Swap)                   measured_bare                 swaps_pct
+  State-dependent Access Error        gate_mbd_err                  state_dependent_access_pct
+  Decay                               idle:decay_err                decay_pct
+  Dephasing (Pure Dephasing)          idle:dephasing_err            dephasing_pct
+  Spectator-access Dephasing          idle_err_due_to_spec_gates    spectator_access_dephasing_pct
+  Many-body Dephasing                 MBD_idle_err                  many_body_dephasing_pct
+
+VALUES SOURCE
+-------------
+The CSV per-channel percentages are taken VERBATIM from the printed output of cell
+In[191] ("for i in errors: print(df_master_new_def[i])"), which captures the final
+df_master_new_def state that cell In[143] plotted. (The notebook was run
+incrementally; In[191]'s arrays are the authoritative figure values.) These In[191]
+arrays are pasted into extract_fig4f.py as NB_IN191 and multiplied by 100 -> percent.
+
+extract_fig4f.py ALSO fully reproduces df_master from the supporting datasets,
+following the notebook cell-by-cell, and prints a cross-check vs In[191]. The
+recomputed values agree with the figure values to within (% points):
+   decay 0.0119, dephasing 0.0011, spectator_access 0.0828,
+   many_body 0.0014, state_dependent 0.0000, swaps 0.0000.
+The small residuals on the idle channels come from gate-time drift between notebook
+runs (the recompute uses the man1_storage_swap_dataset.csv co-located with the
+notebook, which exactly reproduces the In[45] decay print).
+
+PER-CHANNEL DERIVATION (notebook formulas)
+------------------------------------------
+Common idle time per target mode i (cell In[30]-In[32]):
+  t_C1fetch = ge_pulse/2 + ef_pulse + t_f0g1  (ge=ef=35*4ns pulses; t_f0g1 = M1 pi time)
+  t_f0g1_idle = 6 * t_C1fetch                 (fetch into M1 for all 6 spectators)
+  t_M1Si_idle = sum_{j != i} t(M1-Sj)         (M1-Sj swap pi times of the other 6 modes)
+  Gate/idle times read from man1_storage_swap_dataset.csv ('pi (mus)' column).
+
+All "idle" channels apply a /14 per-operation conversion in cell In[96]
+  (x -> 1-(1-x)^(1/14): a full 7-mode random read = 7 modes * (write+read) = 14 ops).
+
+1) Decay (decay_pct)  -- cell In[33],[45],[96]
+   T1s hard-coded [358.3,1254.8,799.0,597.4,355.7,589.5,371.2] us
+       (= Storage rows of system_frequencies_and_coherences.csv).
+   kappa_T1 = 1/T1.
+   eps_decay(raw) = 1 - exp(-kappa_T1 * (t_f0g1_idle + t_M1Si_idle) * 2)
+   figure value  = 1 - (1 - eps_decay_raw)^(1/14)
+
+2) Dephasing / Pure dephasing (dephasing_pct)  -- cell In[39]-[45],[96]
+   T2_echo from ModeT2s_and_echoes.csv (rows type=='T2_echo'); kappa_T2 = 1/T2echo.
+   eps_deph(raw) = 1 - exp(-(kappa_T2 - kappa_T1/2) * (t_f0g1_idle + t_M1Si_idle) * 2)
+   figure value  = 1 - (1 - eps_deph_raw)^(1/14)
+
+3) Spectator-access Dephasing (spectator_access_dephasing_pct)  -- cell In[52]-[66],[96]
+   Effective cross-Kerr of each M1-Sj gate onto target Si:
+     ckerr[i][j] = 1/t2_with_spec(target=i,spec=j) - kappa_T2_bare(i)
+       (t2_with_spec from t2s_with_spectators.csv; bare from ModeT2s T2 rows.)
+   Per spectator-gate fidelity = 1 - |ckerr[i][j]| * (2*t(M1-Sj) + 2*t_f0g1)
+   eps_spec(raw) = 1 - prod_{j != i} (per-gate fidelity)
+   figure value  = 1 - (1 - eps_spec_raw)^(1/14)
+
+4) Many-body Dephasing (many_body_dephasing_pct)  -- cell In[67]-[77],[96]
+   For each target, del_kappa = max - min of dephasing rate (1/t2) over the 6
+   spectator-state preparations (ManyBodyDephasing.csv, kappa=1/t2).
+   eps_MBD(raw) = 1 - exp(-del_kappa * (t_f0g1_idle + t_M1Si_idle) * 2)
+   figure value = 1 - (1 - eps_MBD_raw)^(1/14)
+
+5) State-dependent Access Error (state_dependent_access_pct)  -- cell In[80]-[90],[96]
+   Per-fetch infidelity matrix eps[i][j] from StateDependentAccessError.csv ('eps').
+   Convert per-fetch -> swap: eps_swap[i][j] = 1 - (1 - eps[i][j])^(3/2).
+   gate_mbd_err(raw)[i] = sum over all 7 spectator columns j of eps_swap[i][j]
+       (the diagonal j==i is included, exactly as the notebook does).
+   figure value = 1 - (1 - gate_mbd_err_raw)^(1/7).
+
+6) Swaps / Bare swap (swaps_pct)  -- cell In[93],[96]
+   measured_bare(raw) = hard-coded dual-rail RB infidelities
+       [0.00335,0.00239,0.00300,0.00612,0.00679,0.00416,0.00593].
+   figure value = 1 - (1 - measured_bare_raw)^(1/7 * 3/2)
+       (per-mode contribution of one swap = (3/2) dual-rail-gate fetches).
+
+MEASURED POINT (measured_pct, measured_err_pct)  -- cell In[143]
+------------------------------------------------------------------
+Hard-coded in the notebook as fidelities_new / fidelities_err_new and plotted as
+the black "Measured" marker. measured_pct = (1 - fidelities_new)*100.
+These arrays are EXACTLY rbam_fidelities / rbam_fidelity_errs of row 0
+(mode_list=[1,2,3,4,5,6,7]) of all_rbam.csv:
+  /Volumes/slab/Multimode/experiment/240911/RAM_paper_results/datasets/all_rbam.csv
+
+================================================================================
+STACKED TOTAL vs MEASURED  (percent)
+================================================================================
+  mode   stacked_total   measured   diff (total - measured)
+  S1       1.9087         1.1714     +0.7373
+  S2       1.2638         1.2587     +0.0051
+  S3       0.8754         1.1117     -0.2363
+  S4       1.1027         1.1137     -0.0110
+  S5       1.0187         1.2320     -0.2133
+  S6       1.3650         1.2318     +0.1332
+  S7       0.9836         1.1924     -0.2088
+Stacked totals are within ~0.2-0.3 pct points of measured for S2-S7; S1 budget
+overshoots measured by ~0.74 pts (dominated by its large spectator-access channel).
+This is consistent with the figure (budget bars sit slightly above/below the
+measured marker per mode).
+
+================================================================================
+MEASURED-vs-all_rbam COMPARISON  ->  PASS
+================================================================================
+measured_pct (from notebook fidelities_new) vs 1 - rbam_fidelities (all_rbam.csv,
+row mode_list=[1..7]):
+
+  mode   notebook measured_pct   all_rbam 1-fid (%)   match
+  S1        1.17140               1.17140             yes
+  S2        1.25868               1.25868             yes
+  S3        1.11170               1.11170             yes
+  S4        1.11373               1.11373             yes
+  S5        1.23199               1.23199             yes
+  S6        1.23181               1.23181             yes
+  S7        1.19236               1.19236             yes
+
+The notebook's hard-coded fidelities_new array is bit-identical to all_rbam.csv
+rbam_fidelities (row 0). measured_err_pct == rbam_fidelity_errs * 100 likewise.
+
+RESULT: PASS
+================================================================================

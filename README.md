@@ -15,12 +15,15 @@ fig2/   Fig 2(a)  f0g1 (Q<->B) Rabi trace            [pending raw trace]
         Fig 2(e)  per-mode SWAP infidelity bar chart
 fig3/   Fig 3(b)  random read fidelity vs # accesses (7 modes + ref)  [done]
         Fig 3(c)  random read infidelity vs RAQM size                [done]
-fig4/   Fig 4(a)  cross-Kerr matrix
-        Fig 4(c)  state-dependent access error matrix
-        Fig 4(d)  spectator-access dephasing matrix
-        Fig 4(e)  many-body dephasing rate per mode
-        Fig 4(f)  random-read error budget
+fig4/   Fig 4(a)  cross-Kerr matrix                       [done]
+        Fig 4(c)  state-dependent access error matrix      [done]
+        Fig 4(d)  spectator-access dephasing matrix        [done]
+        Fig 4(e)  many-body dephasing rate per mode         [done]
+        Fig 4(f)  random-read error budget                  [done]
 ```
+
+All data panels are reproduced and verified against the published values.
+Pending only: Fig 2(a) and Fig 2(b) raw time traces (awaiting the source files).
 
 (Schematic / circuit / device panels — 1a,b, 2d, 3a, 4b — contain no statistical
 data and are not included.)
