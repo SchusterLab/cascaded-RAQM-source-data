@@ -1,0 +1,66 @@
+Fig 4d — spectator-access dephasing matrix (kHz)
+================================================
+
+RESULT: PASS
+
+What Fig 4d shows
+-----------------
+7x7 matrix. Row = storage mode S_i whose Ramsey dephasing is measured (target).
+Col = spectator storage mode S_j that is randomly accessed with beam-splitter
+gates during S_i's Ramsey. Value = ADDITIONAL dephasing rate (kHz) induced on
+S_i by accessing the spectator S_j. Diagonal (i==j) undefined / masked.
+
+TOTAL or EXTRA?  ->  EXTRA (additional) dephasing.
+The matrix plots |kappa_with_spectator - kappa_bare|, i.e. the dephasing rate
+ABOVE the mode's own bare Ramsey baseline. (The "2.5-17.5 kHz" colorbar guess in
+the task description is not the determining factor; the off-diagonal mean only
+matches 2.772 kHz under the EXTRA definition. See verification below.)
+
+Source data
+-----------
+Spectator T2: 240911/RAM_paper_results/datasets/t2s_with_spectators.csv
+  columns used: target, spectator, t2 (us), t2_err (us)
+Bare T2:      240911/RAM_paper_results/datasets/ModeT2s_and_echoes.csv
+  rows with type=='T2'; columns used: target, t2 (us)
+
+Exact conversion (from analysis_notebooks/RAQM paper/error_budget_new.ipynb,
+cell In[54], where it is named `ckerr_m1_si_mat`)
+-------------------------------------------------
+  kappa_with_spectator = 1 / t2                     # t2 in us -> MHz
+  kappa_bare(target)   = 1 / T2_bare(target)        # MHz, from ModeT2s (type=='T2')
+  matrix_value         = | kappa_with_spectator - kappa_bare |
+  plotted              = matrix_value * 1e3         # -> kHz
+
+So in kHz directly:
+  dephasing_kHz = | 1000/t2  -  1000/T2_bare(target) |
+
+Error bar (propagated; this CSV improves on the notebook, which stored the raw
+t2_err in us without converting):
+  dephasing_err_kHz = t2_err / t2^2 * 1e3      # propagation of kappa = 1/T2
+
+Verification vs paper
+---------------------
+Off-diagonal pairs (n = 42):
+  mean spectator-access (extra) dephasing = 2.7726 kHz
+  paper-reported value                    = 2.772 kHz      -> MATCH (PASS)
+
+Bare Ramsey baseline (mean of kappa_bare over S1..S7):
+  computed = 1.9619 kHz   (paper text: 2.105 kHz)
+  The bare baseline is computed from the T2 fits in ModeT2s_and_echoes.csv;
+  the paper's 2.105 kHz comes from the same family of Ramsey fits and is in the
+  same range. The primary verification target (2.772 kHz extra dephasing)
+  matches to 4 significant figures.
+
+Sanity note on the alternative (TOTAL) definition:
+  If values were TOTAL dephasing (1000/t2, no baseline subtraction) the
+  off-diagonal mean would be 4.7067 kHz, which does NOT match 2.772 kHz.
+  Hence EXTRA is confirmed.
+
+Per-pair extra-dephasing range: 0.0665 - 18.7519 kHz.
+
+Output
+------
+fig4d_spectator_access_dephasing.csv
+  columns: target_mode, spectator_mode, dephasing_kHz, dephasing_err_kHz
+  49 rows (7x7); 7 diagonal rows have blank/NaN dephasing values.
+Regenerate with: python3 extract_fig4d.py
