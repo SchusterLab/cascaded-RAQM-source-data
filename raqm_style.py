@@ -52,13 +52,15 @@ def categorical(keys=None):
 # warm sequential colormap for heatmaps (cream -> gold -> terracotta -> brown)
 CMAP = LinearSegmentedColormap.from_list(
     "raqm_warm", ["#F2E7CE", "#E3B96B", "#C8703A", "#8A3B1E", "#4A1E12"])
-CMAP.set_bad(CREAM)   # masked cells render as background cream
+# masked cells = "no data measured"; render white so they are NOT read as a
+# colorbar value (distinct from the low end of the scale).
+CMAP.set_bad("white")
 
 def apply():
     mpl.rcParams.update({
-        "figure.facecolor": CREAM,
-        "axes.facecolor": CREAM,
-        "savefig.facecolor": CREAM,
+        "figure.facecolor": "white",
+        "axes.facecolor": "white",
+        "savefig.facecolor": "white",
         "axes.edgecolor": INK,
         "axes.labelcolor": INK,
         "text.color": INK,
