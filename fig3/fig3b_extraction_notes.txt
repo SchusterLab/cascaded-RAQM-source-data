@@ -1,0 +1,24 @@
+Fig 3b RBAM extraction notes (size-7 RAQM, mode_list = [1..7])
+================================================================
+Data directory used   : /Volumes/slab/Multimode/experiment/240911/data
+MultiRBAM name        : _MultiRBAM_sweep_depth.h5
+MultiRBAM file_list   : 855..878 (24 files)
+Reference name        : _SingleRB_sweep_depth.h5
+Reference file_list   : 51..61 (11 files)
+dim (RB)              : 3
+
+Fitted per-gate (storage) fidelities, modes S1..S7
+  (= all_storage_rbam.csv `fidelity` column):
+  [0.9187, 0.9135, 0.9223, 0.9222, 0.9151, 0.9151, 0.9174]
+  reference: [0.9236, 0.9184, 0.9273, 0.9271, 0.9200, 0.9200, 0.9224]
+
+Reference single-qubit gate fidelity (dim=3, two-way): 0.98641
+Reference p_survival (per ref gate)                  : 0.97961
+
+Derived random-read fidelities (one-way; depth axis x7)
+  (= all_rbam.csv `rbam_fidelities` column):
+  [0.98829, 0.98741, 0.98888, 0.98886, 0.98768, 0.98768, 0.98808]
+  reference: [0.98829, 0.98741, 0.98888, 0.98886, 0.98768, 0.98768, 0.98808]
+  paper text: modes range 98.74-98.89 %
+
+CSV written to: /Users/eesh/Documents/RAQM_source_data/fig3/fig3b_rbam_vs_depth.csv
