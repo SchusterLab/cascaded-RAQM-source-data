@@ -28,6 +28,11 @@ Pending only: Fig 2(a) and Fig 2(b) raw time traces (awaiting the source files).
 (Schematic / circuit / device panels — 1a,b, 2d, 3a, 4b — contain no statistical
 data and are not included.)
 
+## Provenance & notebooks
+
+- `SOURCES.md` — per-panel map of repo dataset → slab-drive source file → analysis notebook.
+- `notebooks/` — reference copies of the analysis notebooks (as run).
+
 ## Requirements
 
 ```
