@@ -9,10 +9,14 @@ Right panel: mode frequency vs. coherence time (T1 filled, Ramsey T_R open),
 Data: fig1c_frequencies_and_coherences.csv
 Usage: python plot_fig1c.py
 """
-import os
+import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import raqm_style as rs
+rs.apply()
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 df = pd.read_csv(os.path.join(HERE, "fig1c_frequencies_and_coherences.csv"))
@@ -29,7 +33,7 @@ fig, (axL, axR) = plt.subplots(
 # ---- Left: frequency vs object category ----
 for _, r in df.iterrows():
     axL.errorbar(cat_pos[r["category"]], r["frequency_GHz"],
-                 marker="_", ms=16, mew=2, color="0.2", linestyle="none")
+                 marker="_", ms=16, mew=2, color=rs.PALETTE["ink"], linestyle="none")
 axL.set_xticks(range(len(cat_order)))
 axL.set_xticklabels(cat_order, rotation=45, ha="right")
 axL.set_xlim(-0.5, len(cat_order) - 0.5)
@@ -42,11 +46,12 @@ fr = df["frequency_GHz"].values
 T1, T1e = df["T1_us"].values / 1e3, df["T1_err_us"].values / 1e3
 TR, TRe = df["TR_us"].values / 1e3, df["TR_err_us"].values / 1e3
 
-axR.errorbar(T1, fr, xerr=T1e, marker="o", linestyle="none", color="k",
-             ms=5, label=r"$T_1$")
+axR.errorbar(T1, fr, xerr=T1e, marker="o", linestyle="none",
+             color=rs.PALETTE["slate"], ms=5, label=r"$T_1$")
 m = ~np.isnan(TR)
 axR.errorbar(TR[m], fr[m], xerr=TRe[m], marker="o", linestyle="none",
-             mfc="none", mec="k", color="k", ms=5, label=r"$T_R$")
+             mfc="none", mec=rs.PALETTE["rust"], color=rs.PALETTE["rust"],
+             ms=5, label=r"$T_R$")
 
 axR.set_xscale("log")
 axR.set_xlabel("Coherence (ms)")

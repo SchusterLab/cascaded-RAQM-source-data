@@ -8,17 +8,21 @@ the state-dependent dephasing induced by storage-storage cross-Kerr.
 Data : fig4e_many_body_dephasing.csv  (mode, rate_kHz, rate_err_kHz)
 Usage: python plot_fig4e.py
 """
-import os
+import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import raqm_style as rs
+rs.apply()
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 d = pd.read_csv(os.path.join(HERE, "fig4e_many_body_dephasing.csv"))
 
 pos = range(len(d))   # row 0 = S1 at top
 fig, ax = plt.subplots(figsize=(5, 4))
-ax.errorbar(d["rate_kHz"], pos, xerr=d["rate_err_kHz"], fmt="o", color="#2c6e9c",
-            capsize=3, ms=5)
+ax.errorbar(d["rate_kHz"], pos, xerr=d["rate_err_kHz"], fmt="o",
+            color=rs.PALETTE["teal"], capsize=3, ms=5)
 for p, (_, r) in zip(pos, d.iterrows()):
     ax.text(r["rate_kHz"] + r["rate_err_kHz"] + 0.02, p,
             f"{r['rate_kHz']:.3f}$\\pm${r['rate_err_kHz']:.3f}",

@@ -28,6 +28,13 @@ Pending only: Fig 2(a) and Fig 2(b) raw time traces (awaiting the source files).
 (Schematic / circuit / device panels — 1a,b, 2d, 3a, 4b — contain no statistical
 data and are not included.)
 
+## Style
+
+`raqm_style.py` defines a shared muted/earthy color theme (cream background;
+terracotta, teal, slate-blue, gold) used by all plotting scripts — an
+alternative palette to the one in the published figures. Edit it to restyle
+every panel at once.
+
 ## Provenance & notebooks
 
 - `SOURCES.md` — per-panel map of repo dataset → slab-drive source file → analysis notebook.

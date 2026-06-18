@@ -11,24 +11,29 @@ shown. The shaded region marks where a full memory cycle stays below the surface
 Data : fig3c_random_read_infidelity.csv
 Usage: python plot_fig3c.py
 """
-import os
+import os, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import raqm_style as rs
+rs.apply()
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 d = pd.read_csv(os.path.join(HERE, "fig3c_random_read_infidelity.csv"))
 
 DEPOL = 0.17  # surface-code depolarization threshold
-colors = {1: "#d62728", 2: "#1f77b4", 3: "#2ca02c", 7: "#9467bd"}
+colors = {1: rs.PALETTE["rust"], 2: rs.PALETTE["slate"],
+          3: rs.PALETTE["teal"], 7: rs.PALETTE["purple"]}
 
 fig, ax = plt.subplots(figsize=(6, 4.5))
 
 # threshold line + shaded region (above the line is "bad")
 N = np.logspace(0, 2, 200)
 thr = 1 - (1 - DEPOL) ** (1.0 / (2 * N))
-ax.fill_between(N, thr, 1, color="#f3b6b6", alpha=0.5, lw=0)
-ax.plot(N, thr, "k--", lw=1)
+ax.fill_between(N, thr, 1, color=rs.PALETTE["rust"], alpha=0.15, lw=0)
+ax.plot(N, thr, "--", color=rs.PALETTE["ink"], lw=1)
 ax.text(8, 0.045, "Depolarization Error\nCorrection Threshold",
         rotation=-18, fontsize=8, va="center")
 

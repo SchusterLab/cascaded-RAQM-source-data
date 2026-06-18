@@ -22,6 +22,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import raqm_style as rs
+rs.apply()
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 df = pd.read_csv(os.path.join(HERE, "fig2c_beamsplitter_rb_vs_depth.csv"))
 summ = pd.read_csv(os.path.join(HERE, "fig2e_swap_infidelity.csv")).set_index("mode")
@@ -42,8 +46,8 @@ def plot_mode(m):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5, 6), sharex=True)
 
     # ---- top: process fidelity ----
-    for col, ecol, color, lab in [("fid_raw", "fid_raw_err", "navy", "Raw"),
-                                   ("fid_post", "fid_post_err", "firebrick", "Post selection")]:
+    for col, ecol, color, lab in [("fid_raw", "fid_raw_err", rs.PALETTE["slate"], "Raw"),
+                                   ("fid_post", "fid_post_err", rs.PALETTE["rust"], "Post selection")]:
         y, ye = d[col].values, d[ecol].values
         ax1.errorbar(x, y, yerr=ye, fmt="o", ms=4, color=color, label=lab)
         try:
@@ -58,23 +62,23 @@ def plot_mode(m):
     swap_fid_raw_err = summ.loc[m, "swap_infid_raw_err_pct"]
     swap_fid_post_err = summ.loc[m, "swap_infid_post_err_pct"]
     ax1.text(0.97, 0.78, f"{swap_fid_post:.3f}$\\pm${swap_fid_post_err:.3f}%",
-             color="firebrick", ha="right", transform=ax1.transAxes, fontsize=8)
+             color=rs.PALETTE["rust"], ha="right", transform=ax1.transAxes, fontsize=8)
     ax1.text(0.97, 0.62, f"{swap_fid_raw:.3f}$\\pm${swap_fid_raw_err:.3f}%",
-             color="navy", ha="right", transform=ax1.transAxes, fontsize=8)
+             color=rs.PALETTE["slate"], ha="right", transform=ax1.transAxes, fontsize=8)
     ax1.set_yscale("log")
     ax1.set_ylabel("Process Fidelity")
     ax1.legend(loc="lower left", frameon=False, fontsize=8)
     ax1.set_title(f"M1-S{m}  beam-splitter RB")
 
     # ---- bottom: population ratio ----
-    pops = [("P11", "P11_err", "teal"), ("P10", "P10_err", "firebrick"),
-            ("P01", "P01_err", "orange"), ("P00", "P00_err", "gold")]
+    pops = [("P11", "P11_err", rs.PALETTE["teal"]), ("P10", "P10_err", rs.PALETTE["rust"]),
+            ("P01", "P01_err", rs.PALETTE["gold"]), ("P00", "P00_err", rs.PALETTE["purple"])]
     for col, ecol, color in pops:
         ax2.errorbar(x, d[col].values, yerr=d[ecol].values, fmt="o", ms=4,
                      color=color, label=f"$P_{{{col[1:]}}}$")
     xf = np.linspace(x.min(), x.max(), 300)
-    ax2.plot(xf, np.exp(-xf * T_GATE_US / T1_us[m]), "k--", lw=1,
-             label="$T_1$ decay")
+    ax2.plot(xf, np.exp(-xf * T_GATE_US / T1_us[m]), "--", lw=1,
+             color=rs.PALETTE["ink"], label="$T_1$ decay")
     ax2.set_yscale("log")
     ax2.set_ylim(1e-3, 1.5)
     ax2.set_xlabel("Number of Gates")
