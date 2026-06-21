@@ -35,9 +35,11 @@ terracotta, teal, slate-blue, gold) used by all plotting scripts — an
 alternative palette to the one in the published figures. Edit it to restyle
 every panel at once.
 
-## Provenance & notebooks
+## Provenance, methods & notebooks
 
 - `SOURCES.md` — per-panel map of repo dataset → slab-drive source file → analysis notebook.
+- `analysis/` — the actual fitting/extraction functions (RB fits, gate-fidelity
+  conversion, dual-rail parity populations) used to produce the figure data.
 - `notebooks/` — reference copies of the analysis notebooks (as run).
 
 ## Requirements
