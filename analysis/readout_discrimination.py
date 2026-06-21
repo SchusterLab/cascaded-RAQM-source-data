@@ -4,7 +4,10 @@ h5 files into binary g/e outcomes (and the calibration that defines it).
 
 This is the front of the pipeline that precedes the RB counting/fitting in
 `rb_analysis.py` and `parity_extraction.py`. Verbatim logic (plotting removed)
-from `multimode_expts/fit_display.py` (`hist`, `filter_data_IQ`).
+from `MM_base.hist` / `MM_base.filter_data_IQ` — the discriminator the 240911
+measurement code actually calls (the `hist` imported from
+`experiments.single_qubit.single_shot` wraps `MM_base.hist`). The algorithm is
+identical to the `hist` in `fit_display.py`.
 
 Pipeline per experiment:
   raw h5 shots  ->  [active-reset post-selection]  ->  threshold discrimination

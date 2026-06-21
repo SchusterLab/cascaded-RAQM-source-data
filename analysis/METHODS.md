@@ -51,10 +51,13 @@ the target state:
   `= P10/(P10+P01)`.
 
 ## 5. Survival → fidelity — `rb_analysis.py`
-Fit survival vs depth to an exponential (`fitexp`/`expfunc` for RBAM,
-`single_exponential_fit` for BS-RB), then convert the decay to an **average gate
-fidelity** with `find_gate_fidelity` (depolarizing model, `dim=3`; interleaved
-reference division for the multiplexed case).
+Fit survival vs depth to the standard RB form `a·p^depth + b` (`fitrb`; the
+multiplexed RBAM extraction uses the equivalent exponential `fitexp`), then
+convert the decay parameter `p` to an **average gate fidelity** via `rb_error`
+(`1-(p+(1-p)/d)`) / `rb_gate_fidelity` for interleaved RB, with `d=3`.
+(`find_gate_fidelity` is the same depolarizing conversion, `1 - rb_error`, and is
+the form used in `../fig3/extract_fig3b.py`.) These are verbatim from the
+`experiments/fitting.py` library that the 240911 code imports as `fitter`.
 
 ## 6. Derived figures of merit — `rb_analysis.py`
 - **Fig 2e**: `swap_infidelity = 1 - gate_fid**1.5` (a SWAP = 1.5 BS gates).

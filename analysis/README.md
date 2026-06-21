@@ -18,12 +18,15 @@ This is the **upstream step** that produces the binary outcomes the routines
 below then count and fit.
 
 ## `rb_analysis.py` — randomized benchmarking
+Copied **verbatim** from the library the 240911 code imports
+(`experiments/fitting.py`, used as `fitter`):
 | Function | Used for | What it does |
 |---|---|---|
-| `expfunc`, `fitexp` | Fig 3b RBAM | single-exponential survival fit; `decay` = RB decay constant in gates |
-| `single_exponential_fit` | Fig 2c BS-RB | fit `a e^{bx}+c`; per-gate fidelity `exp(-1/r)`, `r=1/|b|` |
-| `double_exponential_fit` | BS-RB (two-rate) | two decay rates + their fidelities |
-| `find_gate_fidelity` | Fig 3b/3c | depolarizing parameter `p` → average gate fidelity `1-(d-1)/d·(1-p)` (dim=3), with interleaved reference division |
+| `rb_func`, `fitrb` | RB fit | standard RB survival `a·p^depth + b`; `fitrb` returns the decay `p` |
+| `rb_error` | gate error | average error per gate `1-(p+(1-p)/d)` |
+| `rb_gate_fidelity` | interleaved RB | `1-(d-1)(1-p_irb/p_rb)/d` |
+| `expfunc`, `fitexp` | Fig 3 RBAM | exponential decay (equivalent form, `p = e^{-1/decay}`) used by the RBAM extraction |
+| `find_gate_fidelity` | Fig 3b/3c | depolarizing `p` → gate fidelity (= `1 - rb_error`); the form used in `../fig3/extract_fig3b.py` |
 | `swap_infidelity` | Fig 2e | `1 - gate_fid**1.5` (a SWAP = 1.5 beam-splitter gates) |
 | `random_read_fidelity` | Fig 3b/3c | `sqrt(F_mode/F_ref)` with the size-N depth axis scaled by `n_modes` |
 
