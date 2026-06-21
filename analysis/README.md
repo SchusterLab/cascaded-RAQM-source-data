@@ -5,6 +5,18 @@ figure data. Reproduced (verbatim logic, plotting/printing removed) from the lab
 analysis stack `SchusterLab/multimode_expts` — `fit_display.py`,
 `experiments/fitting.py`, and the notebooks in `../notebooks/`.
 
+**See `METHODS.md` for the end-to-end narrative** (raw h5 shots → discrimination
+→ post-selection → populations → survival → fit → fidelity).
+
+## `readout_discrimination.py` — raw shots → g/e outcomes
+| Function | What it does |
+|---|---|
+| `single_shot_calibration` | rotates the IQ blobs, finds the threshold maximizing cumulative-histogram contrast, returns g–e assignment fidelity + confusion matrix |
+| `filter_data_IQ` | active-reset / herald post-selection on the interleaved readouts |
+
+This is the **upstream step** that produces the binary outcomes the routines
+below then count and fit.
+
 ## `rb_analysis.py` — randomized benchmarking
 | Function | Used for | What it does |
 |---|---|---|
