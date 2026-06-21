@@ -1,12 +1,11 @@
 """
 Figure 4(a): cross-Kerr matrix between storage and buffer modes (log color scale).
 
-Rows = spectator modes S1..S6, columns = target modes B, S1..S5.
+Rows = spectator modes S1..S7, columns = target modes B, S1..S6.
 Cell value = |cross-Kerr| (kHz):
-  - column B  : |chi(B1, S_i)|  (buffer-storage cross-Kerr)
-  - column S_j: |chi(S_i, S_j)| (storage-storage; diagonal = storage self-Kerr)
-The storage-storage block is symmetric and is symmetrized from the measured
-lower triangle.
+  - column B  : |chi(B1, S_i)|  (buffer-storage cross-Kerr), every row
+  - column S_j: |chi(S_i, S_j)| shown only for j < i  (strict lower triangle;
+    each storage-storage pair once, no self-Kerr diagonal)
 
 Data : fig4a_cross_kerr_matrix_kHz.csv  (full Q,C,B1,B2,S1..S7,R matrix)
 Usage: python plot_fig4a.py
@@ -24,20 +23,19 @@ rs.apply()
 HERE = os.path.dirname(os.path.abspath(__file__))
 M = pd.read_csv(os.path.join(HERE, "fig4a_cross_kerr_matrix_kHz.csv"), index_col=0)
 
-# symmetric storage-storage block S1..S7
-stor = [f"S{i}" for i in range(1, 8)]
-S = M.loc[stor, stor].values
-S = np.where(S == 0, S.T, S)        # symmetrize (fill upper triangle)
-
-targets = ["B", "S1", "S2", "S3", "S4", "S5"]
-spectators = [f"S{i}" for i in range(1, 7)]
+# Lower-triangular staircase: rows = spectator S1..S7, cols = target B, S1..S6.
+# For target storage S_j show |chi(S_i, S_j)| only when j < i (each pair once,
+# no self-Kerr diagonal); plus the buffer column for every row.
+spectators = [f"S{i}" for i in range(1, 8)]        # rows S1..S7
+targets = ["B"] + [f"S{j}" for j in range(1, 7)]   # cols B, S1..S6
 grid = np.full((len(spectators), len(targets)), np.nan)
 for r, sp in enumerate(spectators):
-    i = int(sp[1:]) - 1
-    grid[r, 0] = abs(M.loc[sp, "B1"])                # buffer-storage
-    for c, tg in enumerate(targets[1:], start=1):
-        j = int(tg[1:]) - 1
-        grid[r, c] = abs(S[i, j])
+    i = r + 1
+    grid[r, 0] = abs(M.loc[sp, "B1"])              # buffer-storage cross-Kerr
+    for c in range(1, len(targets)):
+        j = c                                       # target storage index
+        if j < i:                                   # strict lower triangle
+            grid[r, c] = abs(M.loc[sp, f"S{j}"])
 
 fig, ax = plt.subplots(figsize=(5, 4.5))
 im = ax.imshow(np.ma.masked_invalid(grid),

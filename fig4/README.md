@@ -4,8 +4,10 @@
 **Dataset:** `fig4a_cross_kerr_matrix_kHz.csv` — full self/cross-Kerr matrix (kHz)
 over modes Q,C,B1,B2,S1..S7,R (= Supplementary Table 3). Diagonal = self-Kerr,
 lower triangle = measured cross-Kerr.
-**Script:** `plot_fig4a.py` → `fig4a.pdf/.png` (|chi| for the B,S1..S5 × S1..S6
-block, log color scale). `build_fig4a_data.py` regenerates the CSV.
+**Script:** `plot_fig4a.py` → `fig4a.pdf/.png` — lower-triangular staircase,
+rows = spectator S1..S7, cols = target B, S1..S6; B column for every row and
+|chi(S_i,S_j)| for j<i (no self-Kerr diagonal), log color scale.
+`build_fig4a_data.py` regenerates the CSV.
 
 ## Fig 4(c) — state-dependent access error  ✅
 **Dataset:** `fig4c_state_dependent_access_error.csv` — `target_mode,
